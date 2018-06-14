@@ -1,0 +1,93 @@
+*{margin:0;padding:0;}
+html{
+  font-size:62.5%;
+}
+html,body,#app,.wrapper{
+  width:100%;
+  height:100%;
+  overflow: hidden;
+}
+body{
+  font-family:"microsoft yahei";
+  font-size: 1.2rem;
+  -webkit-tap-highlight-color:rgba(0, 0, 0, 0);
+}
+/*ios蓝色边框*/
+a:focus,
+input:focus,
+p:focus,
+div:focus{
+  -webkit-tap-highlight-color:rgba(0,0,0,0);
+  -webkit-user-modify:read-write-plaintext-only;
+}
+a{text-decoration: none}
+.wid100{
+  width:100% !important;
+}
+.fl{
+  float: left;
+}
+.tl{
+  text-align: left;
+}
+.tr{
+  text-align: right;
+}
+.tc{
+  text-align: center;
+}
+.fr{
+  float: right;
+}
+.lrpaded{
+  padding: 0 10px;
+}
+.mb30{
+  margin-bottom: 30px;
+}
+.mt12{
+  margin-top: 13px;
+}
+.mt20{
+  margin-top: 20px !important;
+}
+.ml30{
+  margin-left: 30px;
+}
+.wordblue{
+  color: #409EFF;
+}
+.m20{margin: 0 20px}
+.p20{padding: 0 20px}
+.warning{
+  color: #E6A23C;
+}
+/*色彩*/
+.blue{
+  color: #409EFF;
+}
+.success{
+  color: #67C23A;
+}
+.danger{color:#F56C6C}
+.logo-color{
+  color:#209BD7;
+}
+.p12{
+  padding: 12px !important;
+}
+
+.f20{
+  font-size: 20px;
+}
+.hiddenbox{
+  display: none;
+}
+/*插件css改变*/
+.el-message-box {
+  width: 55%;
+}
+
+
+
+
