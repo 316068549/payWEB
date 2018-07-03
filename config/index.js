@@ -19,14 +19,16 @@ module.exports = {
                }
          },
       '/daili': {
-        target: 'http://192.168.1.151:9006',
+         target: 'http://60.205.4.247:8071',
+        // target: 'http://192.168.1.151:9006',
         changeOrigin: true,
         pathRewrite: {
           '^/daili': '/'
         }
       },
       '/paydaili': {
-        target: 'http://192.168.1.151:8072',
+         target: 'http://60.205.4.247:8072',
+        //target: 'http://192.168.1.151:8072',
         changeOrigin: true,
         pathRewrite: {
           '^/paydaili': '/'

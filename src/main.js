@@ -6,7 +6,8 @@ import 'element-ui/lib/theme-chalk/index.css';
 import App from './App'
 import router from './router'
 import axios from 'axios';
-import "babel-polyfill";
+import 'es6-promise/auto'
+import 'babel-polyfill'
 import $ from 'jquery';
 
 

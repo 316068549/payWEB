@@ -147,7 +147,7 @@
 
       },
       validate(){
-        let valUrl = this.url+'/'+this.msgId+'/valid';
+        var valUrl = this.url+'/'+this.msgId+'/valid';
         this.$axios({
           headers: {
             'Authorization':'Basic OWU3MjkxNzk2Nzk3MzgzMTFhM2QyYzUzOjQ2MzI0NjUwMWQ0ODBkODIzYzUzNTIwMg==',
@@ -175,13 +175,11 @@
         this.$refs[formName].validate((valid) => {
           if (valid) {
             this.loading = true;
-            let pam = {userName:this.ruleForm.name,password:this.ruleForm.pass};
-            var params = new URLSearchParams();
-            params.append('mobile', this.ruleForm.name);
-            params.append('password', this.ruleForm.pass);
+//            let pam = {userName:this.ruleForm.name,password:this.ruleForm.pass};
+            var params = 'mobile='+this.ruleForm.name+'&password='+this.ruleForm.pass;
             forgetpass(params).then(res=>{
               console.log(res);
-              let ak = this.isSucess(res.data,'login');
+              var ak = this.isSucess(res.data,'login');
               if(!ak){
                 this.loading = false;
               }else{

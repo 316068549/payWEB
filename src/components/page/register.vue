@@ -57,7 +57,8 @@
         sended:false,
         count:'',
         timer:null,
-        url:'mobilemsg/codes',
+//        url:'https://api.sms.jpush.cn/v1/codes',
+        url:'http://sms.yunpian.com/v2/sms/single_send.json',
         msgId:'',
         ruleForm: {
           name: '',
@@ -97,26 +98,45 @@
                 }
               },1000)
             }
+//            this.$.ajax({
+//              type: "post",
+//              url: this.url,
+//              headers:{
+//                'Authorization':'Basic OWU3MjkxNzk2Nzk3MzgzMTFhM2QyYzUzOjQ2MzI0NjUwMWQ0ODBkODIzYzUzNTIwMg==',
+//                'Content-Type':'application/json'
+//              },
+//              data: {
+//                mobile:this.ruleForm.name,
+//                temp_id:149021
+//              },
+//              dataType: "json",
+////              beforeSend: function (xhr) {
+////                xhr.withCredentials = true
+////              }
+//            })
+//              .done(function() {
+//                alert("$.get succeeded")
+//              });
+            var params = 'apikey=b155ab868e12d77cdd74051def4e113f&mobile='+this.ruleForm.name+'&text=【云片网】您的验证码是1234'
             this.$axios({
               headers: {
                 'Access-Control-Allow-Origin': '*',
-                'Authorization':'Basic OWU3MjkxNzk2Nzk3MzgzMTFhM2QyYzUzOjQ2MzI0NjUwMWQ0ODBkODIzYzUzNTIwMg==',
-                'Content-Type':'application/json'
+                'Content-Type': 'application/x-www-form-urlencoded'
+//                'Authorization':'Basic OWU3MjkxNzk2Nzk3MzgzMTFhM2QyYzUzOjQ2MzI0NjUwMWQ0ODBkODIzYzUzNTIwMg==',
+//                'Content-Type':'application/json'
               },
               method:'post',
               url:this.url,
-              data:{
-                mobile:this.ruleForm.name,
-                temp_id:149021
-              }
+              data:params,
             }).then((res)=>{
               console.log(res);
               this.msgId = res.data.msg_id;
             }).catch((error)=>{
               console.log(error);
             })
-          }
 
+
+          }
             })
 
 
@@ -127,7 +147,7 @@
 
       },
       validate(){
-        let valUrl = this.url+'/'+this.msgId+'/valid';
+        var valUrl = this.url+'/'+this.msgId+'/valid';
         this.$axios({
           headers: {
             'Authorization':'Basic OWU3MjkxNzk2Nzk3MzgzMTFhM2QyYzUzOjQ2MzI0NjUwMWQ0ODBkODIzYzUzNTIwMg==',
@@ -155,13 +175,11 @@
         this.$refs[formName].validate((valid) => {
           if (valid) {
             this.loading = true;
-            let pam = {userName:this.ruleForm.name,password:this.ruleForm.pass};
-            var params = new URLSearchParams();
-            params.append('mobile', this.ruleForm.name);
-            params.append('password', this.ruleForm.pass);
+//            let pam = {userName:this.ruleForm.name,password:this.ruleForm.pass};
+            var params = 'mobile='+this.ruleForm.name+'&password='+this.ruleForm.pass;
             regeister(params).then(res=>{
               console.log(res);
-              let ak = this.isSucess(res.data,'login');
+              var ak = this.isSucess(res.data,'login');
               if(!ak){
                 this.loading = false;
               }else{

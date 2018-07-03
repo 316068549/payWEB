@@ -34,6 +34,10 @@ export default new Router({
           component:resolve => require(['../components/page/returnUrl.vue'],resolve)
         },
         {
+          path:'/returnUrl2',
+          component:resolve => require(['../components/page/returnUrl2.vue'],resolve)
+        },
+        {
           path:'/fail',
           component:resolve => require(['../components/page/PayFail.vue'],resolve)
         },

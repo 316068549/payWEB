@@ -1,6 +1,7 @@
 <template>
   <header class="mui-bar mui-bar-nav bar-redd">
-    <a v-if="this.$route.path!='/login'" @touchstart="goBack" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left barh el-icon-arrow-left" ></a>
+    <a v-if="this.$route.path!='/login'&&this.$route.path!='/returnUrl'&&this.$route.path!='/pay'" @touchstart="goBack" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left barh el-icon-arrow-left" ></a>
+    <a v-if="this.$route.path=='/returnUrl'||this.$route.path=='/success'||this.$route.path=='/fail'" @touchstart="goHome" class="shou barh fl" >返回首页</a>
     <h1 class="mui-title barh">{{title}}</h1>
   </header>
 </template>
@@ -19,6 +20,9 @@
         window.history.length > 1
           ? this.$router.go(-1)
           : this.$router.push('/')
+      },
+      goHome () {
+        this.$router.push('/pay')
       }
     }
 
@@ -39,6 +43,10 @@
   }
   .bar-redd {
     background-color: #C4151C;
+  }
+  .shou{
+    font-size: 14px;
+    line-height: 43px;
   }
   .mui-bar-nav {
     top: 0;

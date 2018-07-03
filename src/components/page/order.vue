@@ -58,7 +58,7 @@
 </template>
 
 <script>
-  import {pay,payResult,wxpay,wxpayResult,orderInfo} from '../../apiconfig/api.config'
+  import {pay,payResult,wxpay,wxpayResult,orderInfo,reurl} from '../../apiconfig/api.config'
   export default {
     data() {
       return {
@@ -86,21 +86,25 @@
       choose(){
         if(this.form.checked&&this.form.checked2){
           this.form.checked2=false;
+        }else if(!this.form.checked&&!this.form.checked2){
+          this.form.checked=true;
         }
       },
       choose2(){
         if(this.form.checked&&this.form.checked2){
           this.form.checked=false;
+        }else if(!this.form.checked&&!this.form.checked2){
+          this.form.checked2=true;
         }
       },
       //查询订单详情
       searchOrder(){
         orderInfo(this.orderId).then(res=>{
           console.log(res);
-          let ak = this.isSucess(res.data,'pay');
+          var ak = this.isSucess(res.data,'pay');
           if(ak){
             this.totalAmount = res.data.data.totalAmount;
-            this.imei = res.data.data.deviceId;
+            this.imei = res.data.data.deviceIMEI;
           }else{
            alert(res.data.msg);
           }
@@ -111,17 +115,18 @@
       },
       //获取微信支付url
       findwxUrl(){
-        let params = new URLSearchParams();
-        params.append('orderId', this.orderId);
+//        var params = new URLSearchParams();
+//        params.append('orderId', this.orderId);
+        var params = 'orderId='+this.orderId;
         wxpay(params).then(res=>{
           console.log(res);
-          let ak = this.isSucess(res.data,'pay');
+          var ak = this.isSucess(res.data,'pay');
           if(!ak){
 //              this.loading = false;
           }else{
             if(res.data.status==1){
 //                跳转页面  http://192.168.1.103:8080/#/success   http%3a%2f%2f192.168.1.103%3a8080%2f%23%2fsuccess
-              this.$('#getBrandWCPayRequest').attr("href",res.data.data.mweb_url+'&redirect_url=http%3a%2f%2f60.205.4.247%3a8071%2f%23%2freturnUrl');
+              this.$('#getBrandWCPayRequest').attr("href",res.data.data.mweb_url+'&redirect_url='+reurl);
             }else{
 //              alert(ak.errmsg);
               this.$alert(res.data.msg, '提示', {
@@ -137,10 +142,10 @@
       },
       //支付宝查询支付结果
       searchResult(){
-        let pam = {orderId:this.orderId}
+        var pam = {orderId:this.orderId}
         payResult(pam).then(res=>{
           console.log(res);
-          let ak = this.isSucess(res.data,'pay');
+          var ak = this.isSucess(res.data,'pay');
           if(!ak){
             this.loading = false;
             this.$router.push('fail');
@@ -155,10 +160,10 @@
       },
       //微信查询支付结果
       wxsearchResult(){
-        let pam = {orderId:this.orderId}
+        var pam = {orderId:this.orderId}
         wxpayResult(pam).then(res=>{
           console.log(res);
-          let ak = this.isSucess(res.data,'pay');
+          var ak = this.isSucess(res.data,'pay');
           if(!ak){
             this.loading = false;
             this.$router.push('fail');
@@ -179,14 +184,16 @@
 //          return;
 //        }
         this.loading = true;
-        let payFuc = this.checked?1:2;//1支付宝2微信
-        let params = new URLSearchParams();
-        params.append('orderId', this.orderId);
+        var payFuc = this.checked?1:2;//1支付宝2微信
+        var params = 'orderId='+this.orderId;
+//        var params = new URLSearchParams();
+//        params.append('orderId', this.orderId);
+        this.$(".pay-btn").val("正在支付").attr("disabled", true);
         if(this.form.checked){
           //z支付宝支付
           pay(params).then(res=>{
             console.log(res);
-            let ak = this.isSucess(res.data,'pay');
+            var ak = this.isSucess(res.data,'pay');
             if(!ak){
 //              this.loading = false;
             }else{
@@ -201,12 +208,28 @@
               this.loading = false;
               this.isFail(error)
             });
-        }else{
+        }else if(this.form.checked2){
           //微信支付
-          console.log(this.$('#getBrandWCPayRequest'))
-          let valUrl = this.$('#getBrandWCPayRequest').attr('href');
+          localStorage.setItem('payOrderId',this.orderId);
+          console.log(this.$('#getBrandWCPayRequest'));
+          var valUrl = this.$('#getBrandWCPayRequest').attr('href');
+          this.$.ajax({
+            headers: {
+              'Referer':'http://www.qianniukeji.vip'
+            },
+            url:valUrl,
+            type: "get",
+            success: function (data) {
+                console.log(data);
+            }
+          });
            window.location.href=valUrl
          setTimeout(()=> this.wxsearchResult(),10000)
+        }else {
+          this.loading = false;
+          this.$alert('请选择支付方式', '提示', {
+            confirmButtonText: '确定'
+          })
         }
 //       this.$axios.post('http://47.95.218.144:9001/login','userName=wangwei&password=123456')
 //       this.$axios.post('http://47.95.218.144:9001/login',{total_amount:this.form.region,deviceIMEI:this.form.name})

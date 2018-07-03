@@ -10,6 +10,7 @@
           <el-input type="password" v-model="ruleForm.pass" auto-complete="off" placeholder="请输入密码"></el-input>
         </el-form-item>
         <el-form-item>
+          <!--<el-button type="primary" class="wid100" :loading="loading" @touchstart="submitForm('ruleForm')">登录</el-button>-->
           <el-button type="primary" class="wid100" :loading="loading" @click="submitForm('ruleForm')">登录</el-button>
         </el-form-item>
       </el-form>
@@ -34,16 +35,19 @@
           pass: ''
         },
         rules: {
-//          name: [
-//            { required: true, message: '请输入手机号', trigger: 'blur' },
-//            { min:11,max:11, message: '手机号长度不正确', trigger: 'blur' }
-//          ],
-//          pass: [
-//            { required: true, message: '请输入密码', trigger: 'blur' },
-//            { min: 6, message: '密码至少为6位', trigger: 'blur' }
-//          ]
+          name: [
+            { required: true, message: '请输入手机号', trigger: 'blur' },
+            { min:11,max:11, message: '手机号长度不正确', trigger: 'blur' }
+          ],
+          pass: [
+            { required: true, message: '请输入密码', trigger: 'blur' },
+            { min: 6, message: '密码至少为6位', trigger: 'blur' }
+          ]
         }
       };
+    },
+    created:function () {
+      localStorage.removeItem('Authorization');
     },
     methods: {
       submitForm(formName) {
@@ -51,18 +55,20 @@
         this.$refs[formName].validate((valid) => {
           if (valid) {
             this.loading = true;
-            let pam = {userName:this.ruleForm.name,password:this.ruleForm.pass};
-            var params = new URLSearchParams();
-            params.append('mobile', this.ruleForm.name);
-            params.append('password', this.ruleForm.pass);
+            var pam = {userName:this.ruleForm.name,password:this.ruleForm.pass};
+//            var params = new URLSearchParams();
+//            params.append('mobile', this.ruleForm.name);
+//            params.append('password', this.ruleForm.pass);
+            var params = 'mobile='+this.ruleForm.name+'&password='+this.ruleForm.pass
             login(params).then(res=>{
                 console.log(res);
-                let ak = this.isSucess(res.data,'pay');
+                 var ak = this.isSucess(res.data,'pay');
                 if(!ak){
                   this.loading = false;
                 }else{
                   localStorage.setItem('py_username',this.ruleForm.name);
-                  sessionStorage.setItem('Authorization',res.data.data.token);
+                  localStorage.setItem('Authorization',res.data.data.token);
+//                  sessionStorage.setItem('Authorization',res.data.data.token);  //微信跳转后auth获取不到，传成null接口报错，用本地存储
                   this.$router.push('/pay');
                 }
             })

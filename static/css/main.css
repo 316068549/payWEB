@@ -20,7 +20,7 @@ div:focus{
   -webkit-tap-highlight-color:rgba(0,0,0,0);
   -webkit-user-modify:read-write-plaintext-only;
 }
-a{text-decoration: none}
+a{text-decoration: none;outline: none;}
 .wid100{
   width:100% !important;
 }
@@ -38,6 +38,12 @@ a{text-decoration: none}
 }
 .fr{
   float: right;
+}
+.l60{
+  line-height: 60px;
+}
+.l40{
+  line-height: 40px;
 }
 .lrpaded{
   padding: 0 10px;
@@ -59,12 +65,16 @@ a{text-decoration: none}
 }
 .m20{margin: 0 20px}
 .p20{padding: 0 20px}
-.warning{
-  color: #E6A23C;
-}
+
 /*色彩*/
 .blue{
   color: #409EFF;
+}
+.warning{
+  color: #E6A23C;
+}
+.grey{
+  color:#808080;
 }
 .success{
   color: #67C23A;
@@ -86,6 +96,13 @@ a{text-decoration: none}
 /*插件css改变*/
 .el-message-box {
   width: 55%;
+}
+.el-dialog__body {
+  padding: 0px;
+}
+
+.el-dialog__header {
+  padding: 0px 20px;
 }
 
 
