@@ -104,7 +104,9 @@ a{text-decoration: none;outline: none;}
 .el-dialog__header {
   padding: 0px 20px;
 }
-
-
+.el-form-item.is-required .el-form-item__label:before {
+  content: '';
+  margin-right: 0px;
+}
 
 

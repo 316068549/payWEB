@@ -1,10 +1,10 @@
 <template>
   <div class="m20 mt20">
-    <el-form ref="form" :model="form" label-width="55px" >
-      <el-form-item label="设备号" >
+    <el-form ref="form" :model="form" :rules="rules" label-width="55px" >
+      <el-form-item label="设备号" prop="name">
         <el-input v-model="form.name" placeholder="请输入设备号"></el-input>
       </el-form-item>
-      <el-form-item label="套餐">
+      <el-form-item label="套餐" prop="region">
         <!--<el-select v-model="form.region" placeholder="请选择套餐" >-->
           <!--<el-option label="一天一分钱" value="0.01"></el-option>-->
           <!--<el-option label="一个月100元" value="100"></el-option>-->
@@ -21,7 +21,7 @@
           <div class="grid-content"></div>
         </el-col>
         <el-col :span="11">
-          <el-button  id="getBrandWCPayRequest" class="mt12" type="primary" :loading="loading" @click="onSubmit">购买</el-button>
+          <el-button  id="getBrandWCPayRequest" class="mt12" type="primary" :loading="loading" @click="onSubmit('form')">购买</el-button>
         </el-col>
       </el-form-item>
     </el-form>
@@ -48,7 +48,13 @@
           name: '',
           region: ''
         },
-        prices:[]
+        prices:[],
+        rules: {
+          name: [
+            { required: true, message: '请输入设备号', trigger: 'blur' }
+          ],
+          region: [{required: true, message: '请选择套餐', trigger: 'change'}]
+        }
       }
     },
     created:function () {
@@ -76,37 +82,47 @@
 
     }
     ,methods: {
-      onSubmit() {
+      onSubmit(formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            this.loading = true;
+            var params = 'orderName=设备服务购买&deviceIMEI='+this.form.name+'&totalAmount='+this.form.region+'&description=';
+            //生成订单
+            order(params).then(res=>{
+              console.log(res);
+              var ak = this.isSucess(res.data,'pay');
+              if(!ak){
+                this.loading = false;
+              }else{
+                var ordUrl = '/order/'+res.data.data.id;
+                this.$router.push(ordUrl);
+              }
+            })
+              .catch( error=> {
+                this.loading = false;
+                this.isFail(error)
+              });
+          }else {
+            console.log('error submit!!');
+            return false;
+          }
+        })
 //        var fp=new Fingerprint2();
 //        fp.get((result, components)=>{
 //          console.log(result); //指纹获取
 //          console.log(components); // an array of FPcomponents
 //          console.log(this.$route);
-          this.loading = true;
+
 //        let pam = {total_amount:this.form.region,code:1,body:this.form.name,subject:'服务购买',
 //                   out_trade_no:'70501111111S001111119',product_code:'QUICK_WAP_WAY',timeout_express:"90m"};
-        var params = 'orderName=设备服务购买&deviceIMEI='+this.form.name+'&totalAmount='+this.form.region+'&description='
+
 //          var params = new URLSearchParams();
 //          params.append('orderName', '设备服务购买');
 //          params.append('deviceIMEI', this.form.name);
 //          params.append('totalAmount', this.form.region);
 //          params.append('description', '');
 //          params.append('code', result);
-          //生成订单
-          order(params).then(res=>{
-            console.log(res);
-            var ak = this.isSucess(res.data,'pay');
-            if(!ak){
-              this.loading = false;
-            }else{
-              var ordUrl = '/order/'+res.data.data.id;
-              this.$router.push(ordUrl);
-            }
-          })
-            .catch( error=> {
-              this.loading = false;
-              this.isFail(error)
-            });
+
 
 //        });
 

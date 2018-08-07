@@ -14,12 +14,15 @@ let paybase='';
 if (process.env.NODE_ENV == 'development') {
     // base = 'daili';//需要代理的
      paybase='paydaili';
-   base='http://60.205.4.247:9006' //axios直接跨域访问的
+   // base='http://60.205.4.247:9006' //axios直接跨域访问的
+   base='http://47.95.218.144:9006' //axios直接跨域访问的
 } else if (process.env.NODE_ENV == 'production') {
    // base = 'daili';
    // paybase = 'paydaili';
-   base = 'http://60.205.4.247:9006';
-   paybase = 'http://60.205.4.247:8072';
+   // base = 'http://60.205.4.247:9006';
+   // paybase = 'http://60.205.4.247:8072';
+  base = 'http://47.95.218.144:9007';
+  paybase = 'http://47.95.218.144:8072';
 }
 
 

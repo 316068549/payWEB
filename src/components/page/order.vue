@@ -184,13 +184,18 @@
 //          return;
 //        }
         this.loading = true;
-        var payFuc = this.checked?1:2;//1支付宝2微信
+        var payFuc = this.form.checked?1:2;//1支付宝2微信
         var params = 'orderId='+this.orderId;
+        var disVal = this.$(".pay-btn").prop("disabled");
+        console.log(disVal)
+        if(disVal==true){
+          this.$(".pay-btn").attr("disabled", false);
+        }
 //        var params = new URLSearchParams();
 //        params.append('orderId', this.orderId);
-        this.$(".pay-btn").val("正在支付").attr("disabled", true);
         if(this.form.checked){
           //z支付宝支付
+          this.$(".pay-btn").val("正在支付").attr("disabled", true);
           pay(params).then(res=>{
             console.log(res);
             var ak = this.isSucess(res.data,'pay');
@@ -210,6 +215,7 @@
             });
         }else if(this.form.checked2){
           //微信支付
+          this.$(".pay-btn").val("正在支付").attr("disabled", true);
           localStorage.setItem('payOrderId',this.orderId);
           console.log(this.$('#getBrandWCPayRequest'));
           var valUrl = this.$('#getBrandWCPayRequest').attr('href');

@@ -56,9 +56,10 @@
         loading:false,
         sended:false,
         count:'',
+        code:'',
         timer:null,
 //        url:'https://api.sms.jpush.cn/v1/codes',
-        url:'http://sms.yunpian.com/v2/sms/single_send.json',
+        url:'http://v.juhe.cn/sms/send',
         msgId:'',
         ruleForm: {
           name: '',
@@ -78,8 +79,17 @@
       };
     },
     methods: {
+        creatCode(){
+          var num='';
+          for(let i=0;i<6;i++){
+            num+=Math.floor(Math.random()*10)
+          }
+          console.log(num);
+          return num;
+        },
       send(a){
           ///^1[34578]\d{9}$/
+        this.code = this.creatCode();
         this.$refs.ruleForm.validateField('name', (val)=> {
               console.log(val)
           if(val!=''){
@@ -98,9 +108,11 @@
                 }
               },1000)
             }
-//            this.$.ajax({
-//              type: "post",
-//              url: this.url,
+            var sendUrl = this.url+'?mobile='+this.ruleForm.name+'&tpl_id=85895&tpl_value=%23code%23%3D'+this.code+'&dtype=&key=ddbf2eb2fd6889536d25b932ded6d07f';
+            this.$.ajax({
+              type: "get",
+              url: sendUrl,
+              dataType: 'jsonp',
 //              headers:{
 //                'Authorization':'Basic OWU3MjkxNzk2Nzk3MzgzMTFhM2QyYzUzOjQ2MzI0NjUwMWQ0ODBkODIzYzUzNTIwMg==',
 //                'Content-Type':'application/json'
@@ -110,30 +122,41 @@
 //                temp_id:149021
 //              },
 //              dataType: "json",
-////              beforeSend: function (xhr) {
-////                xhr.withCredentials = true
-////              }
-//            })
-//              .done(function() {
-//                alert("$.get succeeded")
-//              });
-            var params = 'apikey=b155ab868e12d77cdd74051def4e113f&mobile='+this.ruleForm.name+'&text=【云片网】您的验证码是1234'
-            this.$axios({
-              headers: {
-                'Access-Control-Allow-Origin': '*',
-                'Content-Type': 'application/x-www-form-urlencoded'
-//                'Authorization':'Basic OWU3MjkxNzk2Nzk3MzgzMTFhM2QyYzUzOjQ2MzI0NjUwMWQ0ODBkODIzYzUzNTIwMg==',
-//                'Content-Type':'application/json'
-              },
-              method:'post',
-              url:this.url,
-              data:params,
-            }).then((res)=>{
-              console.log(res);
-              this.msgId = res.data.msg_id;
-            }).catch((error)=>{
-              console.log(error);
+//              beforeSend: function (xhr) {
+//                xhr.withCredentials = true
+//              }
             })
+              .done((res) =>{
+                  console.log(res)
+                if(res['error_code']==0){
+
+                }else{
+                  this.$message.error(res.reason);
+                }
+              })
+              .fail(function(res) {
+                console.log(res);
+                  alert(res);
+              });//延迟失败
+
+//            var params = 'apikey=b155ab868e12d77cdd74051def4e113f&mobile='+this.ruleForm.name+'&text=【云片网】您的验证码是1234'
+
+//            this.$axios({
+////              headers: {
+////                'Access-Control-Allow-Origin': '*',
+////                'Content-Type': 'application/x-www-form-urlencoded'
+////                'Authorization':'Basic OWU3MjkxNzk2Nzk3MzgzMTFhM2QyYzUzOjQ2MzI0NjUwMWQ0ODBkODIzYzUzNTIwMg==',
+////                'Content-Type':'application/json'
+////              },
+//              method:'get',
+//              url:this.url+'?mobile=13898966666&tpl_id=1&tpl_value=%23code%23%3D431515&dtype=&key=ddbf2eb2fd6889536d25b932ded6d07f',
+////              data:params,
+//            }).then((res)=>{
+//              console.log(res);
+//              this.msgId = res.data.msg_id;
+//            }).catch((error)=>{
+//              console.log(error);
+//            })
 
 
           }
@@ -147,28 +170,33 @@
 
       },
       validate(){
-        var valUrl = this.url+'/'+this.msgId+'/valid';
-        this.$axios({
-          headers: {
-            'Authorization':'Basic OWU3MjkxNzk2Nzk3MzgzMTFhM2QyYzUzOjQ2MzI0NjUwMWQ0ODBkODIzYzUzNTIwMg==',
-            'Content-Type':'application/json'
-          },
-          method:'post',
-          url:valUrl,
-          data:{
-            code:this.ruleForm.valdate,
-          }
-        }).then((res)=>{
-          console.log(res);
-          if(res['is_valid'] == 'true'){
+          if(this.ruleForm.valdate==this.code){
             this.$message({type:'successs',message:'验证成功'});
           }else{
-              this.$message.error('验证码错误');
+            this.$message.error('验证码错误');
           }
-        }).catch((error)=>{
-          this.$message.error(error);
-          console.log(error);
-        })
+//        var valUrl = this.url+'/'+this.msgId+'/valid';
+//        this.$axios({
+//          headers: {
+//            'Authorization':'Basic OWU3MjkxNzk2Nzk3MzgzMTFhM2QyYzUzOjQ2MzI0NjUwMWQ0ODBkODIzYzUzNTIwMg==',
+//            'Content-Type':'application/json'
+//          },
+//          method:'post',
+//          url:valUrl,
+//          data:{
+//            code:this.ruleForm.valdate,
+//          }
+//        }).then((res)=>{
+//          console.log(res);
+//          if(res['is_valid'] == 'true'){
+//            this.$message({type:'successs',message:'验证成功'});
+//          }else{
+//              this.$message.error('验证码错误');
+//          }
+//        }).catch((error)=>{
+//          this.$message.error(error);
+//          console.log(error);
+//        })
       }
       ,
       submitForm(formName) {

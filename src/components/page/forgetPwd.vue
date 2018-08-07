@@ -57,7 +57,7 @@
         sended:false,
         timer:null,
         count:'',
-        url:'mobilemsg/codes',
+        url:'http://v.juhe.cn/sms/send',
         msgId:'',
         ruleForm: {
           name: '',
@@ -68,7 +68,8 @@
         rules: {
           name: [
             { required: true, message: '请输入手机号', trigger: 'blur' },
-            { min:11,max:11, message: '手机号长度不正确', trigger: 'blur' }
+            { min:11,max:11, message: '手机号长度不正确', trigger: 'blur' },
+            { pattern: /^1[3|4|5|7|8][0-9]{9}$/, message: '目前只支持中国大陆的手机号码', trigger: 'blur' }
           ],
           pass: [{validator:validatePass , trigger: 'blur' },],
           checkPass: [{validator:validatePass2, trigger: 'blur' }]
@@ -76,7 +77,16 @@
       };
     },
     methods: {
+      creatCode(){
+        var num='';
+        for(let i=0;i<6;i++){
+          num+=Math.floor(Math.random()*10)
+        }
+        console.log(num);
+        return num;
+      },
       send(a){
+        this.code = this.creatCode();
         this.$refs.ruleForm.validateField('name', (val)=> {
           console.log(val)
           if(val!=''){
@@ -95,24 +105,25 @@
                 }
               },1000)
             }
-            this.$axios({
-              headers: {
-                'Access-Control-Allow-Origin': '*',
-                'Authorization':'Basic OWU3MjkxNzk2Nzk3MzgzMTFhM2QyYzUzOjQ2MzI0NjUwMWQ0ODBkODIzYzUzNTIwMg==',
-                'Content-Type':'application/json'
-              },
-              method:'post',
-              url:this.url,
-              data:{
-                mobile:this.ruleForm.name,
-                temp_id:149021
-              }
-            }).then((res)=>{
-              console.log(res);
-              this.msgId = res.data.msg_id;
-            }).catch((error)=>{
-              console.log(error);
+            var sendUrl = this.url+'?mobile='+this.ruleForm.name+'&tpl_id=85895&tpl_value=%23code%23%3D'+this.code+'&dtype=&key=ddbf2eb2fd6889536d25b932ded6d07f';
+            this.$.ajax({
+              type: "get",
+              url: sendUrl,
+              dataType: 'jsonp'
             })
+              .done((res) =>{
+                console.log(res)
+                if(res['error_code']==0){
+
+                }else{
+                  this.$message.error(res.reason);
+                }
+              })
+              .fail(function(res) {
+                console.log(res);
+                alert(res);
+              });//延迟失败
+
           }
 
         })
@@ -147,28 +158,11 @@
 
       },
       validate(){
-        var valUrl = this.url+'/'+this.msgId+'/valid';
-        this.$axios({
-          headers: {
-            'Authorization':'Basic OWU3MjkxNzk2Nzk3MzgzMTFhM2QyYzUzOjQ2MzI0NjUwMWQ0ODBkODIzYzUzNTIwMg==',
-            'Content-Type':'application/json'
-          },
-          method:'post',
-          url:valUrl,
-          data:{
-            code:this.ruleForm.valdate,
-          }
-        }).then((res)=>{
-          console.log(res);
-          if(res['is_valid'] == 'true'){
-            this.$message({type:'successs',message:'验证成功'});
-          }else{
-            this.$message.error('验证码错误');
-          }
-        }).catch((error)=>{
-          this.$message.error(error);
-          console.log(error);
-        })
+        if(this.ruleForm.valdate==this.code){
+          this.$message({type:'successs',message:'验证成功'});
+        }else{
+          this.$message.error('验证码错误');
+        }
       }
       ,
       submitForm(formName) {
